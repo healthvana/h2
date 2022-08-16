@@ -7,13 +7,27 @@ This module contains a HTTP/2 settings object. This object provides a simple
 API for manipulating HTTP/2 settings, keeping track of both the current active
 state of the settings and the unacknowledged future values of the settings.
 """
-import collections
 import enum
+import sys
 
 from hyperframe.frame import SettingsFrame
 
 from h2.errors import ErrorCodes
 from h2.exceptions import InvalidSettingsValueError
+
+if sys.version_info.major >= 3 and sys.version_info.minor >= 10:
+    """
+    The apns2 package is throwing errors because some aliases in collections were removed in 3.10. Specifically, the
+    error is coming from a dependency of apns2 named hyper.
+    """
+    import collections
+    from collections import abc
+    collections.Iterable = abc.Iterable
+    collections.Mapping = abc.Mapping
+    collections.MutableSet = abc.MutableSet
+    collections.MutableMapping = abc.MutableMapping
+else:
+    import collections
 
 
 class SettingCodes(enum.IntEnum):
